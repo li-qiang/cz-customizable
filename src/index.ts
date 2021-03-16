@@ -63,7 +63,7 @@ export const prompter = async (cz: any, commit: (msg: string) => void) => {
       message: 'Input message content:',
     }])
     .then(anwser => {
-      commit(`[${username}] #${anwser.issue} ${anwser.type}:${anwser.body}`);
+      commit(`[${username}] #${anwser.issue} ${anwser.type}: ${anwser.body}`);
     })
 };
 
