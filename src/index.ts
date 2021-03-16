@@ -47,7 +47,7 @@ export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
     .prompt([{
       name: 'cardNo',
       type: 'input',
-      message: 'Input jira issue key(xiaouq-test):',
+      message: 'Input jira issue key:',
       default: options.defaultCardNo
     }, {
       type: 'list',
