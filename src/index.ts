@@ -1,17 +1,12 @@
-import inquirer from 'inquirer';
 import process from 'process';
-// import path from 'path';
-// import fs from 'fs';
-// import YAML from 'yamljs';
-
 import longest = require('longest');
 import commitTypes = require('conventional-commit-types');
 import commitizen = require('commitizen');
 import gitconfig = require('gitconfig');
+import Inquirer = require('inquirer');
+const fs = require('fs');
 
-const configLoader = commitizen.configLoader;
-
-var config = configLoader.load() || {};
+var config = commitizen.configLoader.load() || {};
 
 var length = longest(Object.keys(commitTypes.types)).length + 1;
 
@@ -23,34 +18,37 @@ const types = Object.entries(commitTypes.types)
     }
   });
 
-// const dir: string = process.cwd();
-//
-// const fileName = '.cz.yml';
-
-// const configFile = path.join(dir, fileName);
-//
-// const load = YAML.load(configFile);
-
-// fs.readFileSync(configFile)
-
-type STEP = ''
-
 const options = {
   defaultType: process.env.CZ_TYPE || config.defaultType,
-  defaultIssue: process.env.CZ_ISSUE || config.defaultIssue,
+  defaultCardNo: process.env.CZ_CardNo || config.cardNo,
+  emailDomain: config.emailDomain,
 
 };
 
 
-export const prompter = async (cz: any, commit: (msg: string) => void) => {
-  const username = await gitconfig.get({location: 'global'}).then((config) => config.user.name);
+const validateEmail = (email: string) => {
+    let regExp = RegExp(`.*?@${options.emailDomain}`)
+    if(!regExp.test(email)) {
+        console.error( "invalid email:", email);
+        process.exit(1)
+    }
+}
 
-  inquirer
+function cacheCardNo(cardNo: string) {
+    config.cardNo = cardNo;
+    const homedir = require('os').homedir();
+    fs.writeFile(`${homedir}/.czrc`, JSON.stringify(config), () => {})
+}
+
+export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
+  const user = await gitconfig.get({location: 'global'}).then((config) => config.user);
+
+  cz
     .prompt([{
-      name: 'issue',
+      name: 'cardNo',
       type: 'input',
-      message: 'Input jira issue key:',
-      default: options.defaultIssue
+      message: 'Input jira issue key(xiaouq-test):',
+      default: options.defaultCardNo
     }, {
       type: 'list',
       name: 'type',
@@ -62,8 +60,10 @@ export const prompter = async (cz: any, commit: (msg: string) => void) => {
       type: 'input',
       message: 'Input message content:',
     }])
-    .then(anwser => {
-      commit(`[${username}] #${anwser.issue} ${anwser.type}: ${anwser.body}`);
+    .then(answer => {
+        validateEmail(user.email);
+        cacheCardNo(answer.cardNo);
+        commit(`[${user.name}] #${answer.cardNo} ${answer.type}: ${answer.body}`);
     })
 };
 
