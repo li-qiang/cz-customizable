@@ -1,9 +1,10 @@
 import process from 'process';
+import {Answer, Inquirer} from "inquirer";
 import longest = require('longest');
 import commitTypes = require('conventional-commit-types');
 import commitizen = require('commitizen');
 import gitconfig = require('gitconfig');
-import Inquirer = require('inquirer');
+
 const fs = require('fs');
 
 var config = commitizen.configLoader.load() || {};
@@ -20,7 +21,7 @@ const types = Object.entries(commitTypes.types)
 
 const options = {
   defaultType: process.env.CZ_TYPE || config.defaultType,
-  defaultCardNo: process.env.CZ_CardNo || config.cardNo,
+  defaultIssue: process.env.CZ_ISSUE || config.defaultIssue,
   emailDomain: config.emailDomain,
 
 };
@@ -34,11 +35,11 @@ const validateEmail = (email: string) => {
   }
 }
 
-function cacheCardNo(cardNo: string) {
-  config.cardNo = cardNo;
+function cacheAnswer(answer: Answer) {
+  config.defaultIssue = answer.issue;
+  config.defaultType = answer.type;
   const homedir = require('os').homedir();
-  fs.writeFile(`${homedir}/.czrc`, JSON.stringify(config), () => {
-  })
+  fs.writeFile(`${homedir}/.czrc`, JSON.stringify(config), () => {})
 }
 
 export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
@@ -46,10 +47,10 @@ export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
 
   cz
     .prompt([{
-      name: 'cardNo',
+      name: 'issue',
       type: 'input',
       message: 'Input jira issue key:',
-      default: options.defaultCardNo
+      default: options.defaultIssue
     }, {
       type: 'list',
       name: 'type',
@@ -63,8 +64,8 @@ export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
     }])
     .then(answer => {
       validateEmail(user.email);
-      cacheCardNo(answer.cardNo);
-      commit(`[${user.name}] #${answer.cardNo} ${answer.type}: ${answer.body}`);
+      cacheAnswer(answer);
+      commit(`[${user.name}] #${answer.issue} ${answer.type}: ${answer.body}`);
     })
 };
 

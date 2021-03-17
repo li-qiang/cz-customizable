@@ -29,15 +29,13 @@ declare module 'gitconfig' {
 }
 
 declare module 'inquirer' {
-  interface Answer {
+  export interface Answer {
     type: string,
     body: string,
-    cardNo: string
+    issue: string
   }
 
-  interface Inquirer {
+  export interface Inquirer {
     prompt(any): Promise<Answer>
   }
-
-  export = Inquirer;
 }
