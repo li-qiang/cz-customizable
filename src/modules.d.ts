@@ -27,3 +27,15 @@ declare module 'gitconfig' {
   const config: { get(options: Record<string, string>): Promise<GitConfig>; };
   export = config
 }
+
+declare module 'inquirer' {
+  export interface Answer {
+    type: string,
+    body: string,
+    issue: string
+  }
+
+  export interface Inquirer {
+    prompt(any): Promise<Answer>
+  }
+}
