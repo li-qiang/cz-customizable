@@ -27,17 +27,18 @@ const options = {
 
 
 const validateEmail = (email: string) => {
-    let regExp = RegExp(`.*?@${options.emailDomain}`)
-    if(!regExp.test(email)) {
-        console.error( "invalid email:", email);
-        process.exit(1)
-    }
+  let regExp = RegExp(`.*?@${options.emailDomain}`)
+  if (!regExp.test(email)) {
+    console.error("invalid email:", email);
+    process.exit(1)
+  }
 }
 
 function cacheCardNo(cardNo: string) {
-    config.cardNo = cardNo;
-    const homedir = require('os').homedir();
-    fs.writeFile(`${homedir}/.czrc`, JSON.stringify(config), () => {})
+  config.cardNo = cardNo;
+  const homedir = require('os').homedir();
+  fs.writeFile(`${homedir}/.czrc`, JSON.stringify(config), () => {
+  })
 }
 
 export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
@@ -61,9 +62,9 @@ export const prompter = async (cz: Inquirer, commit: (msg: string) => void) => {
       message: 'Input message content:',
     }])
     .then(answer => {
-        validateEmail(user.email);
-        cacheCardNo(answer.cardNo);
-        commit(`[${user.name}] #${answer.cardNo} ${answer.type}: ${answer.body}`);
+      validateEmail(user.email);
+      cacheCardNo(answer.cardNo);
+      commit(`[${user.name}] #${answer.cardNo} ${answer.type}: ${answer.body}`);
     })
 };
 
