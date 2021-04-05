@@ -5,7 +5,6 @@ declare module 'conventional-commit-types' {
 
 }
 
-
 declare module 'longest' {
   function longest(strs: string[]): string
 
@@ -37,5 +36,6 @@ declare module 'inquirer' {
 
   export interface Inquirer {
     prompt(any): Promise<Answer>
+    registerPrompt(pluginName: string, module: any): void;
   }
 }
