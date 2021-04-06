@@ -23,9 +23,11 @@
   "homepage": "https://github.com/li-qiang/cz-jira#readme",
   "dependencies": {
     "@types/yamljs": "^0.2.31",
+    "@types/node": "^14.14.37",
     "commitizen": "^4.2.3",
     "conventional-commit-types": "^3.0.0",
     "gitconfig": "^2.0.8",
+    "inquirer-search-list": "^1.2.6",
     "longest": "^2.0.1",
     "yamljs": "^0.3.0"
   },
